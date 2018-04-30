@@ -30,10 +30,11 @@ public class MLMSBLL  implements Policie {
 			this.clerks=new Clerks[posts];
 			this.waitingList=new LinkedList<>();
 			createClerks();
+			Simulate();
 			
 		}
 
-		public void Simulate() {
+		private void Simulate() {
 			while(!Finished()) {
 				
 			for(Customer c: customers) {
@@ -41,7 +42,7 @@ public class MLMSBLL  implements Policie {
 					waitingList.add(c);
 				}
 			}
-			System.out.println(time+" "+waitingList.size());
+			
 				addToPostDisponible();
 				Serve();
 				time++;
@@ -72,14 +73,13 @@ public class MLMSBLL  implements Policie {
 				
 				if(c.getFirst().getServiceTime()!=0) {
 					c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
-					System.out.println(time);
+
 					c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
 				}
 				if(c.getFirst().getServiceTime()==0) {
-					System.out.println(time);
+				
 					Customer tr=c.removeCustomer();
 					tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
-					System.out.println("DepartureTime="+tr.getDepartureTime());
 					averageTime=averageTime+tr.getDepartureTime();
 					customers.remove(tr);
 				}
@@ -89,6 +89,14 @@ public class MLMSBLL  implements Policie {
 			}
 			}
 		}
+		private void Monitor() {
+			int[] check=minAndMax();
+			if(!(check[0]==check[1])&& (clerks[check[0]].getCustomers()>1 &&clerks[check[1]].getCustomers()>1)){
+				clerks[check[0]].addCustomer(clerks[check[1]].removeLast());
+				
+			}
+			
+		}		
 		private LinkedList<Customer> copy(LinkedList<Customer>c) {
 			
 			LinkedList<Customer> copy= new LinkedList<>();
@@ -122,14 +130,6 @@ public class MLMSBLL  implements Policie {
 			return customers.isEmpty();
 		}
 	
-		private void Monitor() {
-			int[] check=minAndMax();
-			if(!(check[0]==check[1])&& (clerks[check[0]].getCustomers()>1 &&clerks[check[1]].getCustomers()>1)){
-				clerks[check[0]].addCustomer(clerks[check[1]].removeLast());
-				
-			}
-			
-		}
 
 	private int[] minAndMax() {
 		//Save the clerks customers lenght.
@@ -159,5 +159,7 @@ public class MLMSBLL  implements Policie {
 		
 		
 	}
-	
+	public double getM() {
+		return 0;
+		}
 }

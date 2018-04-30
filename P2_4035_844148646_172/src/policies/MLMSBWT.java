@@ -35,10 +35,10 @@ public class MLMSBWT  implements Policie {
 		this.lineTime=new int[posts];
 		this.waitingList=new LinkedList<>();
 		createClerks();
-		
+		Simulate();
 	}
 
-	public void Simulate() {
+	private void Simulate() {
 		while(!Finished()) {
 			
 		for(Customer c: customers) {
@@ -46,7 +46,6 @@ public class MLMSBWT  implements Policie {
 				waitingList.add(c);
 			}
 		}
-		System.out.println(time+" "+waitingList.size());
 			addToPostDisponible();
 			Serve();
 			time++;
@@ -78,14 +77,13 @@ public class MLMSBWT  implements Policie {
 			
 			if(c.getFirst().getServiceTime()!=0) {
 				c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
-				System.out.println(time);
+				
 				c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
 			}
 			if(c.getFirst().getServiceTime()==0) {
-				System.out.println(time);
+				
 				Customer tr=c.removeCustomer();
 				tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
-				System.out.println("DepartureTime="+tr.getDepartureTime());
 				averageTime=averageTime+tr.getDepartureTime();
 				customers.remove(tr);
 			}
@@ -128,5 +126,7 @@ public class MLMSBWT  implements Policie {
 	public boolean Finished() {
 		return customers.isEmpty();
 	}
-
+	public double getM() {
+		return 0;
+		}
 }

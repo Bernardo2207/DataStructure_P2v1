@@ -22,10 +22,11 @@ public SLMS(LinkedList<Customer> customers,int posts) {
 	this.clerks=new Clerks[posts];
 	this.waitingList=new LinkedList<>();
 	createClerks();
+	Simulate();
 	
 }
 //This Method takes care of simulating the Process.
-public void Simulate() {
+private void Simulate() {
 	while(!Finished()) {		
 	for(Customer c: customers) {
 		if(c.getArrivalTime()==time) {
@@ -54,14 +55,11 @@ public void Serve() {
 	if(c.getCustomers()!=0) {
 		if(c.getCustomers()!=0) {
 			c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
-			//System.out.println(time);
 			c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
 		}
 		if(c.getFirst().getServiceTime()==0) {
-			System.out.println(time);
 			Customer tr=c.removeCustomer();
 			tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
-			System.out.println("DepartureTime="+tr.getDepartureTime());
 			averageTime=averageTime+tr.getDepartureTime();
 			customers.remove(tr);}
 		}
@@ -100,4 +98,7 @@ public double getTime() {
 public boolean Finished() {
 	return customers.isEmpty();
 }
+public double getM() {
+	return 0;
+	}
 }

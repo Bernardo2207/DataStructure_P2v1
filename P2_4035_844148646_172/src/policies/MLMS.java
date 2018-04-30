@@ -35,10 +35,10 @@ public class MLMS  implements Policie{
 		this.clerks=new Clerks[posts];
 		this.waitingList=new LinkedList<>();
 		createClerks();
-		
+		Simulate();
 	}
 
-	public void Simulate() {
+	private void Simulate() {
 		while(!Finished()) {
 			
 		for(Customer c: customers) {
@@ -46,7 +46,6 @@ public class MLMS  implements Policie{
 				waitingList.add(c);
 			}
 		}
-		System.out.println(time+" "+waitingList.size());
 			addToPostDisponible();
 			Serve();
 			time++;
@@ -55,7 +54,7 @@ public class MLMS  implements Policie{
 	}
 
 
-	public void addToPostDisponible() {
+	private void addToPostDisponible() {
 		//Index of the clerks with the less people.
 		while(!waitingList.isEmpty()) {
 		int lowIndex=clerks[0].getCustomers();
@@ -72,20 +71,19 @@ public class MLMS  implements Policie{
 		}
 		
 	
-	public void Serve() {
+	private void Serve() {
 		for(Clerks c: clerks) {
 		if(c.getCustomers()!=0) {
 			
 			if(c.getFirst().getServiceTime()!=0) {
 				c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
-				System.out.println(time);
+				
 				c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
 			}
 			if(c.getFirst().getServiceTime()==0) {
-				System.out.println(time);
+				
 				Customer tr=c.removeCustomer();
 				tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
-				System.out.println("DepartureTime="+tr.getDepartureTime());
 				averageTime=averageTime+tr.getDepartureTime();
 				customers.remove(tr);
 			}
@@ -110,7 +108,7 @@ public class MLMS  implements Policie{
 	public int numberOfCustomer() {
 		return nCustomers;
 	}
-	public void createClerks() {
+	private void createClerks() {
 		for(int i=0;i<posts;i++) {
 			clerks[i]=new Clerks(i);
 		}
@@ -124,9 +122,11 @@ public class MLMS  implements Policie{
 	public double getTime() {
 		return time;
 	}
-	public boolean Finished() {
+	private boolean Finished() {
 		return customers.isEmpty();
 	}
-	
+	public double getM() {
+		return 0;
+		}
 
 }

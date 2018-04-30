@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 
 import policies.MLMS;
 import policies.MLMSBLL;
+import policies.MLMSBWT;
 import policies.Policie;
 import policies.SLMS;
 
@@ -19,9 +20,9 @@ public class MainReader {
 		LinkedList<LinkedList<Customer>>alpha= theData();
 		LinkedList<Customer>x= new LinkedList<>();
 		
-		SLMS q= new SLMS(alpha.get(2),1);
-		SLMS q2= new SLMS(alpha.get(2),3);
-		SLMS q3= new SLMS(alpha.get(2),5);
+		MLMSBWT q= new MLMSBWT(alpha.get(0),1);
+		MLMSBLL q2= new MLMSBLL(alpha.get(0),1);
+		MLMS q3= new MLMS(alpha.get(0),1);
 		
 		q.Simulate();
 		q2.Simulate();

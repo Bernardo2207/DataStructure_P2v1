@@ -1,8 +1,12 @@
 package policies;
 
+import java.util.LinkedList;
+
+import Main.Clerks;
+import Main.Customer;
+
 //Multiple Lines Multiple Servers and Balanced Waiting Times 
 public class MLMSBWT  implements Policie {
-	int posts;
 	/*This scheme is similar to the previous two. Here, there is a monitor too, 
 	 * many servers and one waiting line per server. No line crossing is allowed.
 	 * But in this case, the monitor decides which line the new arriving customer 
@@ -12,29 +16,117 @@ public class MLMSBWT  implements Policie {
 	 * To determine the expected time, the monitor always keeps, for each line,
 	 * the sum of the service times of all those persons in the line, as well as 
 	 * the remaining time for service of the person who is being served at the moment, if any. */
+	int posts,nCustomers;
+	double time=0;
+	private double averageTime=0;
+	private LinkedList<Customer> customers;
+	private LinkedList<Customer> waitingList;
+	private Clerks[]clerks;
+	private int[] lineTime;
 
-	@Override
-	public String getPolicy() {
-		// TODO Auto-generated method stub
-		return "MLMSBET";
+
+	public MLMSBWT(LinkedList<Customer> customers,int posts) {
+		//pre:Customers list must be ordered.
+		
+		this.customers=copy(customers);
+		this.nCustomers=this.customers.size();
+		this.posts=posts;
+		this.clerks=new Clerks[posts];
+		this.lineTime=new int[posts];
+		this.waitingList=new LinkedList<>();
+		createClerks();
+		
 	}
 
-	@Override
-	public int postNumbers() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void Simulate() {
+		while(!Finished()) {
+			
+		for(Customer c: customers) {
+			if(c.getArrivalTime()==time) {
+				waitingList.add(c);
+			}
+		}
+		System.out.println(time+" "+waitingList.size());
+			addToPostDisponible();
+			Serve();
+			time++;
+			
+		}	
 	}
 
-	@Override
-	public double getTime() {
-		// TODO Auto-generated method stub
-		return 0;
+
+	public void addToPostDisponible() {
+		//Index of the clerks with the less people.
+		while(!waitingList.isEmpty()) {
+		int lowIndex=lineTime[0];
+		int index=0;
+	
+		for(int i=1;i<lineTime.length;i++) {
+			if(lineTime[i]<lowIndex)
+				index=i;}
+				Customer toAdd=waitingList.removeFirst();
+				clerks[index].addCustomer(toAdd);
+				lineTime[index]=lineTime[index]+toAdd.getServiceTime();
+				
+			}
+		}
+		
+	
+	public void Serve() {
+		for(Clerks c: clerks) {
+		if(c.getCustomers()!=0) {
+			
+			if(c.getFirst().getServiceTime()!=0) {
+				c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
+				System.out.println(time);
+				c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
+			}
+			if(c.getFirst().getServiceTime()==0) {
+				System.out.println(time);
+				Customer tr=c.removeCustomer();
+				tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
+				System.out.println("DepartureTime="+tr.getDepartureTime());
+				averageTime=averageTime+tr.getDepartureTime();
+				customers.remove(tr);
+			}
+			
+			
+			
+		}
+		}
+	}
+	private LinkedList<Customer> copy(LinkedList<Customer>c) {
+		
+		LinkedList<Customer> copy= new LinkedList<>();
+		for(Customer x: c) {
+			copy.add(new Customer(x.getArrivalTime(),x.getServiceTime()));
+		}
+		return copy;
 	}
 
-	@Override
 	public double showAverageTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return averageTime/nCustomers;
+	}
+	public int numberOfCustomer() {
+		return nCustomers;
+	}
+	public void createClerks() {
+		for(int i=0;i<posts;i++) {
+			clerks[i]=new Clerks(i);
+			lineTime[i]=0;
+		}
+	}
+	public String getPolicy() {
+		return "MLMSBWT";
+	}
+	public int postNumbers() {
+		return posts;
+	}
+	public double getTime() {
+		return time;
+	}
+	public boolean Finished() {
+		return customers.isEmpty();
 	}
 
 }

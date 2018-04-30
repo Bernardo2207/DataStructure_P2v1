@@ -6,8 +6,8 @@ import Main.Customer;
 
 //Single Line Multiple Servers
 public class SLMS implements Policie{
-int posts,nCustomers;
-double time=0;
+private int posts,nCustomers;
+private double time=0;
 private double averageTime=0;
 private LinkedList<Customer> customers;
 private LinkedList<Customer> waitingList;
@@ -24,21 +24,20 @@ public SLMS(LinkedList<Customer> customers,int posts) {
 	createClerks();
 	
 }
-
+//This Method takes care of simulating the Process.
 public void Simulate() {
 	while(!Finished()) {		
 	for(Customer c: customers) {
 		if(c.getArrivalTime()==time) {
-			waitingList.add(c);
-		}
-	}
+			waitingList.add(c);}}
+	
 		addToPostDisponible();
 		Serve();
 		time++;
 	}	
 }
 
-
+//If a customer has arrived and is Waiting,this methods assigns it to the available server.
 public void addToPostDisponible() {
 	
 	for(int i=0;i<clerks.length;i++) {
@@ -48,6 +47,8 @@ public void addToPostDisponible() {
 	}
 	
 }
+//if a Clerks has a customer, this method Serves a unit of time to that customers need.
+//If a clerk has finished with a customer this method remove that customer from the clerk.
 public void Serve() {
 	for(Clerks c: clerks) {
 	if(c.getCustomers()!=0) {
@@ -62,15 +63,11 @@ public void Serve() {
 			tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
 			System.out.println("DepartureTime="+tr.getDepartureTime());
 			averageTime=averageTime+tr.getDepartureTime();
-			customers.remove(tr);
+			customers.remove(tr);}
 		}
-		
-		
-		
-		
-	}
 	}
 }
+
 private LinkedList<Customer> copy(LinkedList<Customer>c) {
 	
 	LinkedList<Customer> copy= new LinkedList<>();

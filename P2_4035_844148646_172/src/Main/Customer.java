@@ -1,14 +1,20 @@
 package Main;
 
 public class Customer {
-int arrivalTime,serviceTime,departureTime=0;
+int arrivalTime,serviceTime,timeServed=0,departureTime=0;
 
 	public Customer(int arrival,int timeNeeded) {
 		this.arrivalTime= arrival;
 		this.serviceTime=timeNeeded;
 		
 	}
-
+	public int getTimeServed() {
+		return timeServed;
+	}
+public void setTimeServed(int t) {
+	timeServed=t;
+	
+}
 	public int getArrivalTime() {
 		return arrivalTime;
 	}

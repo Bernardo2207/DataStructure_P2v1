@@ -16,18 +16,19 @@ public class MLMSBWT  implements Policie {
 	 * To determine the expected time, the monitor always keeps, for each line,
 	 * the sum of the service times of all those persons in the line, as well as 
 	 * the remaining time for service of the person who is being served at the moment, if any. */
-	int posts,nCustomers;
-	double time=0;
+	
+	private int posts,nCustomers;
+	private double time=0;
 	private double averageTime=0;
 	private LinkedList<Customer> customers;
 	private LinkedList<Customer> waitingList;
 	private Clerks[]clerks;
 	private int[] lineTime;
+	private LinkedList<Customer>toCompare=new LinkedList<>();
 
 
 	public MLMSBWT(LinkedList<Customer> customers,int posts) {
-		//pre:Customers list must be ordered.
-		
+		//To maintain the original customers List the list is copied.
 		this.customers=copy(customers);
 		this.nCustomers=this.customers.size();
 		this.posts=posts;
@@ -37,10 +38,9 @@ public class MLMSBWT  implements Policie {
 		createClerks();
 		Simulate();
 	}
-
+//This method runs until every customer has been attended. 
 	private void Simulate() {
-		while(!Finished()) {
-			
+		while(!Finished()) {		
 		for(Customer c: customers) {
 			if(c.getArrivalTime()==time) {
 				waitingList.add(c);
@@ -48,12 +48,13 @@ public class MLMSBWT  implements Policie {
 		}
 			addToPostDisponible();
 			Serve();
+			//time begins at 0.
 			time++;
 			
 		}	
 	}
 
-
+//Based on the Policy each customer is assgined to a server or clerk.
 	public void addToPostDisponible() {
 		//Index of the clerks with the less people.
 		while(!waitingList.isEmpty()) {
@@ -70,27 +71,22 @@ public class MLMSBWT  implements Policie {
 			}
 		}
 		
-	
 	public void Serve() {
 		for(Clerks c: clerks) {
 		if(c.getCustomers()!=0) {
-			
-			if(c.getFirst().getServiceTime()!=0) {
-				c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
-				
+			if(c.getCustomers()!=0) {
+				if(!toCompare.contains(c.getFirst())) {toCompare.addLast(new Customer(c.getFirst().getArrivalTime(),c.getFirst().getServiceTime()));}
+				c.getFirst().setTimeServed(c.getFirst().getTimeServed()+1);
 				c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
+				lineTime[c.getID()]=lineTime[c.getID()]-1;
 			}
-			if(c.getFirst().getServiceTime()==0) {
+			if(c.getFirst().getTimeServed()==c.getFirst().getServiceTime()) {
 				
 				Customer tr=c.removeCustomer();
 				tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
 				averageTime=averageTime+tr.getDepartureTime();
-				customers.remove(tr);
+				customers.remove(tr);}
 			}
-			
-			
-			
-		}
 		}
 	}
 	private LinkedList<Customer> copy(LinkedList<Customer>c) {
@@ -127,6 +123,16 @@ public class MLMSBWT  implements Policie {
 		return customers.isEmpty();
 	}
 	public double getM() {
-		return 0;
+		int j=0;
+		int count=0;
+		for(Customer c:toCompare) {
+			for(int i=j;i<toCompare.size();i++) {
+				if(c.getArrivalTime()>toCompare.get(i).getArrivalTime()) {
+					count++;
+				}
+			}
+			j++;
+		}
+		return (count/numberOfCustomer());
 		}
 }

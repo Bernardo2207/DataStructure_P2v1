@@ -34,4 +34,7 @@ private Customer c;
 	public Customer removeLast() {
 		return fila.pollLast();
 	}
+	public int getID() {
+		return id;
+	}
 }

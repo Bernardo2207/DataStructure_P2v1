@@ -24,6 +24,7 @@ public class MLMS  implements Policie{
 	private LinkedList<Customer> customers;
 	private LinkedList<Customer> waitingList;
 	private Clerks[]clerks;
+	private LinkedList<Customer>toCompare=new LinkedList<>();
 
 
 	public MLMS(LinkedList<Customer> customers,int posts) {
@@ -64,8 +65,6 @@ public class MLMS  implements Policie{
 			if(clerks[i].getCustomers()<lowIndex)
 				index=i;
 		}
-		
-			
 				clerks[index].addCustomer(waitingList.removeFirst());
 			}
 		}
@@ -74,23 +73,17 @@ public class MLMS  implements Policie{
 	private void Serve() {
 		for(Clerks c: clerks) {
 		if(c.getCustomers()!=0) {
-			
-			if(c.getFirst().getServiceTime()!=0) {
-				c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
-				
+			if(c.getCustomers()!=0) {
+				if(!toCompare.contains(c.getFirst())) {toCompare.addLast(new Customer(c.getFirst().getArrivalTime(),c.getFirst().getServiceTime()));}
+				c.getFirst().setTimeServed(c.getFirst().getTimeServed()+1);
 				c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
 			}
-			if(c.getFirst().getServiceTime()==0) {
-				
+			if(c.getFirst().getTimeServed()==c.getFirst().getServiceTime()) {
 				Customer tr=c.removeCustomer();
 				tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
 				averageTime=averageTime+tr.getDepartureTime();
-				customers.remove(tr);
+				customers.remove(tr);}
 			}
-			
-			
-			
-		}
 		}
 	}
 	private LinkedList<Customer> copy(LinkedList<Customer>c) {
@@ -126,7 +119,17 @@ public class MLMS  implements Policie{
 		return customers.isEmpty();
 	}
 	public double getM() {
-		return 0;
+		int j=0;
+		int count=0;
+		for(Customer c:toCompare) {
+			for(int i=j;i<toCompare.size();i++) {
+				if(c.getArrivalTime()>toCompare.get(i).getArrivalTime()) {
+					count++;
+				}
+			}
+			j++;
+		}
+		return (count/numberOfCustomer());
 		}
 
 }

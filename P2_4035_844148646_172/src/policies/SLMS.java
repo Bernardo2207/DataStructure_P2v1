@@ -50,14 +50,14 @@ public void addToPostDisponible() {
 }
 //if a Clerks has a customer, this method Serves a unit of time to that customers need.
 //If a clerk has finished with a customer this method remove that customer from the clerk.
-public void Serve() {
+private void Serve() {
 	for(Clerks c: clerks) {
 	if(c.getCustomers()!=0) {
 		if(c.getCustomers()!=0) {
-			c.getFirst().setServiceTime(c.getFirst().getServiceTime()-1);
+			c.getFirst().setTimeServed(c.getFirst().getTimeServed()+1);
 			c.getFirst().setDepartureTime(c.getFirst().getDepartureTime()+1);
 		}
-		if(c.getFirst().getServiceTime()==0) {
+		if(c.getFirst().getTimeServed()==c.getFirst().getServiceTime()) {
 			Customer tr=c.removeCustomer();
 			tr.setDepartureTime((int)(time+1)-tr.getArrivalTime()-tr.getDepartureTime());
 			averageTime=averageTime+tr.getDepartureTime();

@@ -1,5 +1,5 @@
 package policies;
-
+//Basic Mehods that every Policie should have.
 public interface Policie {
 	//Returns the name of the Policy
 	String getPolicy();
@@ -9,6 +9,7 @@ public interface Policie {
 	double getTime();
 	//Average waiting time of customers to be atended.
 	double showAverageTime();
-	//Number of People that Started receiving service before someone who  arrived earlier.
+	//Number of People that Started rece
 	double getM();
+	int numberOfCustomer();
 }
